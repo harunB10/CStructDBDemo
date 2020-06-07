@@ -66,9 +66,9 @@ int main(int argc, char *argv[]) // argc i argv su parametri koji se prosljeđuj
   else
   {
 
-    const int dbMemory = 2; // Veličina baze (struct niza) ... Ja sam koristio 2 zbog bržeg testiranja... Ovo promijeni na 10 jer se traži u zadatku tako!
+    const int dbMemory = 10; // Veličina baze (struct niza) ...
 
-    Data_t stDataT[dbMemory]; // inicijalizacija baze... zvat će se stDataT
+    Data_t stDataT[dbMemory];     // inicijalizacija baze... zvat će se stDataT
     initItems(stDataT, dbMemory); // inicijalizacija vrijednosti
     long selection;
     do
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) // argc i argv su parametri koji se prosljeđuj
         printDB(stDataT, dbMemory);
         break;
       case 2:
-      // u svakoj funkciji vraća se 0 ako je uspješno odrađena.. -1 ako ima greška, pa je tako i postavljen if else za svaki case
+        // u svakoj funkciji vraća se 0 ako je uspješno odrađena.. -1 ako ima greška, pa je tako i postavljen if else za svaki case
         item = addItem(stDataT, dbMemory);
         if (!item)
         {
@@ -150,7 +150,8 @@ int main(int argc, char *argv[]) // argc i argv su parametri koji se prosljeđuj
         {
           fprintf(stderr, "\nLoading failed\n");
         }
-        case 7:
+        break;
+      case 7:
         item = sortItems(stDataT, dbMemory, 2);
         if (!item)
         {
@@ -160,7 +161,8 @@ int main(int argc, char *argv[]) // argc i argv su parametri koji se prosljeđuj
         {
           fprintf(stderr, "\nSorting failed\n");
         }
-        case 8:
+        break;
+      case 8:
         item = addFromFile(stDataT, dbMemory, "test.txt", "Harun");
         if (!item)
         {
@@ -170,6 +172,7 @@ int main(int argc, char *argv[]) // argc i argv su parametri koji se prosljeđuj
         {
           fprintf(stderr, "\nAdding from file failed\n");
         }
+        break;
       default:
         break;
       }

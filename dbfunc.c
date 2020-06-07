@@ -38,7 +38,6 @@ void printItem(Data_t *item)
 ** koja je već proslijeđena.
 */
 
-
 void printDB(Data_t *items, long len)
 {
   printf("\nDatabase entries:\n");
@@ -63,16 +62,16 @@ long readValue(char *name)
   char input[TEXT_LEN] = "";
   int length, i;
 
+  printf("\n%s: ", name);
+
   scanf("%s", input);
   length = strlen(input);
   for (i = 0; i < length; i++)
-    if (!isdigit(input[i]))  // pomoću isDigit provjerava se da li je unešena vrijednost broj.. ako je slovo treba izbaciti error
+    if (!isdigit(input[i])) // pomoću isDigit provjerava se da li je unešena vrijednost broj.. ako je slovo treba izbaciti error
     {
       fprintf(stderr, "\nEntered input is not a number\n");
       return -1;
     }
-
-  printf("\n%s: ", name);
 
   long number = atol(input); // atol pretvara char u long ... atoi npr pretvara char u int.
 
@@ -234,15 +233,11 @@ long saveDB(Data_t *items, long len, char *outputFile)
       {
         printf("\n --------------------------");
       }
-      else
-      {
-        printf("\n Failure."); // greška prilikom unosa
-      }
     }
 
-    if(fp)
+    if (fp)
     {
-    fclose(fp);
+      fclose(fp);
     } // zatvaranje konekcije sa fajlom
   }
 
@@ -254,7 +249,6 @@ long saveDB(Data_t *items, long len, char *outputFile)
 
   return 0;
 }
-
 
 /*
 ** loadDB čita iz fajla podatke i ubacuje ih u struct niz
@@ -293,9 +287,10 @@ long loadDB(Data_t *items, long len, char *inputFile)
         memset(name, 0, sizeof name);
         memset(brand, 0, sizeof brand);
         memset(invNr, 0, sizeof invNr);
-        printf("\n----------Loaded items: ----------\n");
       }
     }
+    printf("\n----------Loaded items: ----------\n");
+    printDB(items, i);
     printf("\n----------------------------------\n");
   }
   else
@@ -306,7 +301,6 @@ long loadDB(Data_t *items, long len, char *inputFile)
 
   return 0;
 }
-
 
 /*
 ** saveFile pretražuje fajl po zadanom key-u
@@ -397,7 +391,6 @@ long sortItems(Data_t *items, long len, long which)
   return 0;
 }
 
-
 /*
 ** addFromFile pretražuje fajl po zadanom key-u i settuje vrijednosti niza structa od tog rezultata što je pronađen
 */
@@ -432,9 +425,12 @@ long addFromFile(Data_t *items, long len, char *inputFile, char *key)
       }
 
       char *split = strtok(temp, " "); //strtok funkcija razdvaja riječ po riječ.. npr "Danas je lijep dan" razdvojit će na "danas", "lijep", "dan"
-      char *word;
-      char foundResults[3];
-      long i = 0;
+      char *name;
+      char *brand;
+      char *invNr;
+      long year;
+      int found = 0;
+
       while (split != NULL)
       {
         if (find_result >= len)
@@ -443,14 +439,35 @@ long addFromFile(Data_t *items, long len, char *inputFile, char *key)
           return -1;
         }
         // ovdje se vrši settiranje vrijednosti za items... spremi se jedna riječ onda se ponovo poziva strtok da pređe na slijedeću riječ
-        strcpy(items[find_result].name, split);
+
+        name = split;
         split = strtok(NULL, " ");
-        strcpy(items[find_result].brand, split);
+        brand = split;
         split = strtok(NULL, " ");
-        strcpy(items[find_result].invNr, split);
+        invNr = split;
         split = strtok(NULL, " ");
-        items[find_result].year = atol(split);
+        year = atol(split);
         split = strtok(NULL, " ");
+
+        for (long i = 0; i < len; i++)
+        {
+          if (strcmp(items[i].invNr, invNr) == 0)
+          {
+            fprintf(stderr, "\nThere is already item with Inventar Nr. %s at index %d\n", invNr, find_result);
+            found = 1;
+          }
+        }
+        if (!found)
+        {
+          strcpy(items[find_result].name, name);
+          split = strtok(NULL, " ");
+          strcpy(items[find_result].brand, brand);
+          split = strtok(NULL, " ");
+          strcpy(items[find_result].invNr, invNr);
+          split = strtok(NULL, " ");
+          items[find_result].year = year;
+          split = strtok(NULL, " ");
+        }
       }
       find_result++;
     }
